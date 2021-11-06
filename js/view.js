@@ -14,7 +14,6 @@ export default class View {
     this.addTodoForm.onClick((title, description) => this.addTodo(title, description));
     
   }
-
   setModel(model) {
     this.model = model;
   }
@@ -23,24 +22,21 @@ export default class View {
     todos.forEach((todo) => this.createRow(todo));
   }
  
-  filter(filters) {
+  
+ filter(filters) {
     const { type, words } = filters;
     const [, ...rows] = this.table.getElementsByTagName('tr');
     for (const row of rows) {
       const [title, description, completed] = row.children;
       let shouldHide = false;
-
       if (words) {
         shouldHide = !title.innerText.includes(words) && !description.innerText.includes(words);
       }
-
       const shouldBeCompleted = type === 'completed';
       const isCompleted = completed.children[0].checked;
-
       if (type !== 'all' && shouldBeCompleted !== isCompleted) {
         shouldHide = true;
       }
-
       if (shouldHide) {
         row.classList.add('d-none');
       } else {
