@@ -22,7 +22,44 @@ export default class View {
     const todos = this.model.getTodos();
     todos.forEach((todo) => this.createRow(todo));
   }
- //
+ 
+  filter(filters) {
+    const { type, words } = filters;
+    const [, ...rows] = this.table.getElementsByTagName('tr');
+    for (const row of rows) {
+      const [title, description, completed] = row.children;
+      let shouldHide = false;
+
+      if (words) {
+        shouldHide = !title.innerText.includes(words) && !description.innerText.includes(words);
+      }
+
+      const shouldBeCompleted = type === 'completed';
+      const isCompleted = completed.children[0].checked;
+
+      if (type !== 'all' && shouldBeCompleted !== isCompleted) {
+        shouldHide = true;
+      }
+
+      if (shouldHide) {
+        row.classList.add('d-none');
+      } else {
+        row.classList.remove('d-none');
+      }
+    }
+  }
+  editTodo(id, values) {
+    this.model.editTodo(id, values);
+    const row = document.getElementById(id);
+    row.children[0].innerText = values.title;
+    row.children[1].innerText = values.description;
+    row.children[2].children[0].checked = values.completed;
+  }
+
+  removeTodo(id) {
+    this.model.removeTodo(id);
+    document.getElementById(id).remove();
+  }
   addTodo(title, description) {
     const todo = this.model.addTodo(title, description);
     this.createRow(todo);
